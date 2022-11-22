@@ -1,0 +1,184 @@
+version: "3.9"
+
+x-common-variables:
+  # AMQP
+  &common-variables
+  AMQP_ENDPOINT: amqp-cn-7pp2uatij006.ap-southeast-1.amqp-0.vpc.mq.amqp.aliyuncs.com
+  AMQP_PORT: 5672
+  AMQP_VIRTUALHOST: vhost-staging
+  AMQP_USER: DOCKER-SECRET->amqp_user
+  AMQP_PASS: DOCKER-SECRET->amqp_pass
+
+  # Database
+  DB_NODES: dds-t4n75b135a2a92c41.mongodb.singapore.rds.aliyuncs.com:3717,dds-t4n75b135a2a92c42.mongodb.singapore.rds.aliyuncs.com:3717
+  DB_PORT: 3717
+  DB_REPLICASET: mgset-305733659
+  DB_USER: DOCKER-SECRET->db_user
+  DB_PASS: DOCKER-SECRET->db_pass
+
+  # MQTT
+  MQTT_ENDPOINT: mqtt-cn-7pp2uatqu07-internal-vpc.mqtt.aliyuncs.com
+  MQTT_GROUPID: GID_LAZADA_WFM
+  CLIENT_USER: DOCKER-SECRET->client_user
+  CLIENT_PASS: DOCKER-SECRET->client_pass
+  HBT_USER: DOCKER-SECRET->hbt_user
+  HBT_PASS: DOCKER-SECRET->hbt_pass
+  REC_USER: DOCKER-SECRET->rec_user
+  REC_PASS: DOCKER-SECRET->rec_pass
+  ACK_USER: DOCKER-SECRET->ack_user
+  ACK_PASS: DOCKER-SECRET->ack_pass
+  BASIC_USER: DOCKER-SECRET->basic_user
+  BASIC_PASS: DOCKER-SECRET->basic_pass
+
+x-secrets:
+  &secrets
+  secrets:
+    - db_user
+    - db_pass
+    - amqp_user
+    - amqp_pass
+    - client_user
+    - client_pass
+    - hbt_user
+    - hbt_pass
+    - rec_user
+    - rec_pass
+    - ack_user
+    - ack_pass
+    - basic_user
+    - basic_pass
+
+services:
+  # heartbeat
+  heartbeat:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: heartbeat
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  # device-sync
+  device-sync:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: device-sync
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  # ---- forwarder section ----
+  forwarder-hb:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: forwarder-hb
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  forwarder-ack:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: forwarder-ack
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  forwarder-rec:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: forwarder-rec
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  # ---- attendance section ----
+  attendance-get:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: attendance-get
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  attendance-sync:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: attendance-sync
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  # ---- workers section ----
+  worker-sync:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: worker-sync
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  worker-sub-devices-ack:
+    <<: *secrets
+    image: infapp
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: worker-sub-devices-ack
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+secrets:
+  db_user:
+    external: true
+  db_pass:
+    external: true
+  amqp_user:
+    external: true
+  amqp_pass:
+    external: true
+  client_user:
+    external: true
+  client_pass:
+    external: true
+  hbt_user:
+    external: true
+  hbt_pass:
+    external: true
+  rec_user:
+    external: true
+  rec_pass:
+    external: true
+  ack_user:
+    external: true
+  ack_pass:
+    external: true
+  basic_user:
+    external: true
+  basic_pass:
+    external: true

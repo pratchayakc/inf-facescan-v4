@@ -1,0 +1,23 @@
+{"timestamp":"2022-09-27 11:14:27,239", "name": "__main__", "level": "INFO", "function": "<module>", "message": "test info"}
+{"timestamp":"2022-09-27 11:14:27,240", "name": "__main__", "level": "ERROR", "function": "<module>", "message": "test error"}
+{"timestamp":"2022-09-27 11:14:39,629", "name": "__main__", "level": "INFO", "function": "<module>", "message": "test info"}
+{"timestamp":"2022-09-27 11:14:39,629", "name": "__main__", "level": "ERROR", "function": "<module>", "message": "test error"}
+{"timestamp":"2022-09-27 11:17:03,508", "name": "__main__", "level": "INFO", "function": "<module>", "message": "test info"}
+{"timestamp":"2022-09-27 11:17:03,509", "name": "__main__", "level": "ERROR", "function": "<module>", "message": "test error"}
+{"timestamp":"2022-09-27 11:36:55,842", "name": "testlog", "level": "INFO", "function": "<module>", "message": "test info"}
+{"timestamp":"2022-09-27 11:36:55,842", "name": "testlog", "level": "ERROR", "function": "<module>", "message": "test error"}
+{"timestamp":"2022-09-27 12:02:53,248", "name": "testlog", "level": "INFO", "function": "<module>", "message": "info"}
+{"timestamp":"2022-09-27 12:03:38,307", "name": "testlog", "level": "INFO", "function": "<module>", "message": "test-info"}
+{"timestamp":"2022-09-27 12:03:38,307", "name": "testlog", "level": "ERROR", "function": "<module>", "message": "test-error"}
+{"timestamp":"2022-09-27 12:04:07,165", "name": "testlog", "level": "INFO", "function": "<module>", "message": "test-info"}
+{"timestamp":"2022-09-27 12:04:07,165", "name": "testlog", "level": "ERROR", "function": "<module>", "message": "test-error"}
+{"timestamp":"2022-09-27 12:04:27,735", "name": "testlog", "level": "INFO", "function": "<module>", "message": "test-info"}
+{"timestamp":"2022-09-27 12:04:27,736", "name": "testlog", "level": "ERROR", "function": "<module>", "message": "test-error"}
+{"timestamp":"2022-09-27 12:04:27,736", "name": "testlog", "level": "INFO", "function": "on_message", "message": "test-log"}
+{"timestamp":"2022-09-27 12:05:00,874", "name": "testlog", "level": "INFO", "function": "<module>", "message": "test-info"}
+{"timestamp":"2022-09-27 12:05:00,874", "name": "testlog", "level": "ERROR", "function": "<module>", "message": "test-error"}
+{"timestamp":"2022-09-27 12:05:00,874", "name": "testlog", "level": "INFO", "function": "on_message", "message": "test-log"}
+{"timestamp":"2022-09-27 12:06:42,083", "name": "testlog", "level": "INFO", "function": "<module>", "message": "test-info"}
+{"timestamp":"2022-09-27 12:06:42,083", "name": "testlog", "level": "ERROR", "function": "<module>", "message": "test-error"}
+{"timestamp":"2022-09-27 12:06:42,084", "name": "testlog", "level": "INFO", "function": "on_message", "message": "test-log"}
+{"timestamp":"2022-09-27 12:06:42,084", "name": "testlog", "level": "INFO", "function": "on_message", "message": "test-message"}

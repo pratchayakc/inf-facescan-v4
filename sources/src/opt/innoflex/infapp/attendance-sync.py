@@ -45,26 +45,6 @@ exchange = infamqp['exchange']
 LOG_PATH = inflog['path']
 THREADS = int(infetc['threadnum'])
 
-logger = logging.getLogger('AttendanceSync')
-logger.setLevel(logging.DEBUG)
-
-fileFormat = logging.Formatter(
-    '{"timestamp":"%(asctime)s", "name": "%(name)s", "level": "%(levelname)s", "message": "%(message)s"}')
-fileHandler = logging.FileHandler(LOG_PATH+"/inf-attendance-sync.log")
-fileHandler.setFormatter(fileFormat)
-fileHandler.setLevel(logging.INFO)
-logger.addHandler(fileHandler)
-
-streamFormat = logging.Formatter(
-    '%(asctime)s %(name)s [%(levelname)s] %(message)s')
-streamHandler = logging.StreamHandler(sys.stdout)
-streamHandler.setFormatter(streamFormat)
-streamHandler.setLevel(logging.DEBUG)
-logger.addHandler(streamHandler)
-
-# reduce pika log level
-logging.getLogger("pika").setLevel(logging.WARNING)
-
 loggers = {}
 
 def setup_logger(name, log_file, level=logging.INFO):
@@ -240,6 +220,7 @@ class SyncAttendanceHandler(threading.Thread):
             channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
     def run(self):
+        logger = setup_logger('AttendanceSync', LOG_PATH+"/"+"inf-attendance-sync.log")
         try:
             logger.debug('starting thread to consume from AMQP...')
             self.channel.start_consuming()
@@ -250,7 +231,6 @@ class SyncAttendanceHandler(threading.Thread):
 
 def main():
     for i in range(THREADS):
-        logger.debug('launch thread '+str(i))
         td = SyncAttendanceHandler()
         td.start()
 

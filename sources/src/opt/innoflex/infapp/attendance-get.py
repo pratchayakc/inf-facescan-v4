@@ -1,7 +1,6 @@
 """ This module recieve get-attendance message and send attendance history to wfm """
 """ attendance-get.py"""
 
-
 import os
 import sys
 import ast
@@ -11,6 +10,7 @@ import threading
 import configparser
 import string
 import random
+from datetime import datetime
 from pymongo import MongoClient
 from module import alicloudDatabase
 from module import alicloudAMQP
@@ -52,25 +52,38 @@ ROUTING_KEY = EXCHANGE+"."+route
 LOG_PATH = inflog['path']
 THREADS = int(infetc['threadnum'])
 
-logger = logging.getLogger('GetAttendance')
-logger.setLevel(logging.DEBUG)
 
-fileFormat = logging.Formatter(
-    '{"timestamp":"%(asctime)s", "name": "%(name)s", "level": "%(levelname)s", "message": "%(message)s"}')
-fileHandler = logging.FileHandler(LOG_PATH+"/inf-attendance-get.log")
-fileHandler.setFormatter(fileFormat)
-fileHandler.setLevel(logging.INFO)
-logger.addHandler(fileHandler)
+loggers = {}
 
-streamFormat = logging.Formatter(
-    '%(asctime)s %(name)s [%(levelname)s] %(message)s')
-streamHandler = logging.StreamHandler(sys.stdout)
-streamHandler.setFormatter(streamFormat)
-streamHandler.setLevel(logging.DEBUG)
-logger.addHandler(streamHandler)
+def setup_logger(name, log_file, level=logging.INFO):
+    global loggers
 
-# reduce pika log level
-logging.getLogger("pika").setLevel(logging.WARNING)
+    if loggers.get(name):
+        return loggers.get(name)
+
+    else:
+        logger = logging.getLogger(name)
+        logger.setLevel(logging.DEBUG)
+
+        fileFormat = logging.Formatter(
+            '{"timestamp":"%(asctime)s", "name": "%(name)s", "level": "%(levelname)s", "message": "%(message)s"}')
+        fileHandler = logging.FileHandler(log_file)
+        fileHandler.setFormatter(fileFormat)
+        fileHandler.setLevel(level)
+        logger.addHandler(fileHandler)
+
+        streamFormat = logging.Formatter(
+            '%(asctime)s %(name)s [%(levelname)s] %(message)s')
+        streamHandler = logging.StreamHandler(sys.stdout)
+        streamHandler.setFormatter(streamFormat)
+        streamHandler.setLevel(logging.DEBUG)
+        logger.addHandler(streamHandler)
+
+        # reduce pika log level
+        logging.getLogger("pika").setLevel(logging.WARNING)
+        loggers[name] = logger
+
+    return logger
 
 def randomString(length):
     letters_and_digits = string.ascii_lowercase + string.digits
@@ -97,14 +110,17 @@ class ThreadedConsumer(threading.Thread):
 
     def on_message(self, channel, method_frame, header_frame, body):
         try:
-            logger.debug(method_frame.delivery_tag)
             body = str(body.decode())
             body = body.replace("null", '""')
-            logger.debug(body)
 
             message = ast.literal_eval(body)
             messageId = message["messageId"]
             operation = message["operation"]
+
+            logname = 'GetAttendance'+' ['+messageId+'] '
+            logger = setup_logger(logname, LOG_PATH+"/"+"inf-attendance-get.log")
+
+            logger.debug(body)
 
             if operation == "GET_ATTENDANCE":
 
@@ -202,7 +218,7 @@ class ThreadedConsumer(threading.Thread):
                             "errorMsg": "No error message",
                             "info": slist
                         }
-                        print("Get attendances Success !")
+                        logger.debug("Get attendances Success !")
 
                         transection = {}
                         transection["topic"] = "GET_ATTENDANCE_RES"
@@ -226,7 +242,7 @@ class ThreadedConsumer(threading.Thread):
                         "info": [
                         ]
                     }
-                    print("Failed to get attendances due to... can't find any attendance")
+                    logger.debug("Failed to get attendances due to... can't find any attendance")
 
                     transection = {}
                     transection["topic"] = "GET_ATTENDANCE_RES"
@@ -240,15 +256,15 @@ class ThreadedConsumer(threading.Thread):
                     isqmqpSuccess = alicloudAMQP.amqpPublish(
                         EXCHANGE, routingKey, msg_ack, queueName)
 
+                all_ts_time = datetime.now()
+                all_ts_stamp = all_ts_time.strftime("%Y-%m-%d %H:%M:%S")
                 data = {
                     "_id": messageId,
                     "messageId": messageId,
                     "operation": operation,
                     "info": message['info'],
                     "transection": all_transection,
-                    "recieveAllack": True,
-                    "recheck": 0,
-                    "timeout": False
+                    "transection_create": all_ts_stamp
                 }
 
                 isSuccess = alicloudDatabase.insertToDB(transectiontb, data)
@@ -284,6 +300,7 @@ class ThreadedConsumer(threading.Thread):
             channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
     def run(self):
+        logger = setup_logger('GetAttendance', LOG_PATH+"/"+"inf-attendance-get.log")
         try:
             logger.debug('starting thread to consume from rabbit...')
             self.channel.start_consuming()
@@ -291,10 +308,8 @@ class ThreadedConsumer(threading.Thread):
         except Exception as e:
             logger.error(str(e))
 
-
 def main():
     for i in range(THREADS):
-        logger.debug('launch thread '+str(i))
         td = ThreadedConsumer()
         td.start()
 

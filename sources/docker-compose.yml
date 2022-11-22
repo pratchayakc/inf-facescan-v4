@@ -52,7 +52,7 @@ services:
   # heartbeat
   heartbeat:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
@@ -64,7 +64,7 @@ services:
   # device-sync
   device-sync:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
@@ -76,7 +76,7 @@ services:
   # ---- forwarder section ----
   forwarder-hb:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
@@ -87,7 +87,7 @@ services:
 
   forwarder-ack:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
@@ -98,7 +98,7 @@ services:
 
   forwarder-rec:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
@@ -110,7 +110,7 @@ services:
   # ---- attendance section ----
   attendance-get:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
@@ -121,7 +121,7 @@ services:
 
   attendance-sync:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
@@ -133,7 +133,7 @@ services:
   # ---- workers section ----
   worker-sync:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
@@ -142,13 +142,35 @@ services:
       - /opt/innoflex/config:/opt/innoflex/config
       - /var/log/innoflex:/var/log/innoflex
 
-  worker-sub-devices-ack:
+  devices-ack:
     <<: *secrets
-    image: infapp
+    image: infapp4
     hostname: infapp01
     environment:
       <<: *common-variables
-      SERVICE_NAME: worker-sub-devices-ack
+      SERVICE_NAME: devices-ack
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  retry-transection:
+    <<: *secrets
+    image: infapp4
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: retry-transection
+    volumes:
+      - /opt/innoflex/config:/opt/innoflex/config
+      - /var/log/innoflex:/var/log/innoflex
+
+  check-transection:
+    <<: *secrets
+    image: infapp4
+    hostname: infapp01
+    environment:
+      <<: *common-variables
+      SERVICE_NAME: check-transection
     volumes:
       - /opt/innoflex/config:/opt/innoflex/config
       - /var/log/innoflex:/var/log/innoflex

@@ -65,6 +65,37 @@ logger.addHandler(streamHandler)
 # reduce pika log level
 logging.getLogger("pika").setLevel(logging.WARNING)
 
+loggers = {}
+
+def setup_logger(name, log_file, level=logging.INFO):
+    global loggers
+
+    if loggers.get(name):
+        return loggers.get(name)
+
+    else:
+        logger = logging.getLogger(name)
+        logger.setLevel(logging.DEBUG)
+
+        fileFormat = logging.Formatter(
+            '{"timestamp":"%(asctime)s", "name": "%(name)s", "level": "%(levelname)s", "message": "%(message)s"}')
+        fileHandler = logging.FileHandler(log_file)
+        fileHandler.setFormatter(fileFormat)
+        fileHandler.setLevel(level)
+        logger.addHandler(fileHandler)
+
+        streamFormat = logging.Formatter(
+            '%(asctime)s %(name)s [%(levelname)s] %(message)s')
+        streamHandler = logging.StreamHandler(sys.stdout)
+        streamHandler.setFormatter(streamFormat)
+        streamHandler.setLevel(logging.DEBUG)
+        logger.addHandler(streamHandler)
+
+        # reduce pika log level
+        logging.getLogger("pika").setLevel(logging.WARNING)
+        loggers[name] = logger
+
+    return logger
 
 class SyncAttendanceHandler(threading.Thread):
     def __init__(self):
@@ -85,16 +116,23 @@ class SyncAttendanceHandler(threading.Thread):
                 #logger.debug("Random alphanumeric String is:", result_str)
                 return result_str
 
-            logger.debug(method_frame.delivery_tag)
             body = str(body.decode())
             body = body.replace('\\r\\n', '')
             body = body.replace('\\', '')
             body = body[1:]
             body = body[:-1]
-            logger.debug(body)
 
             message = ast.literal_eval(body)
             operator = message["operator"]
+
+            messageId = randomString(
+                8)+"-"+randomString(4)+"-"+randomString(4)+"-"+randomString(4)+"-"+randomString(12)
+            
+            logname = 'AttendanceSync'+' ['+messageId+'] '
+            logger = setup_logger(logname, LOG_PATH+"/"+"inf-attendance-sync.log")
+
+            logger.debug(body)
+            logger.debug("messageId : "+messageId)
 
             if operator == "RecPush":
                 facedevice = message["info"]["facesluiceId"]
@@ -119,10 +157,6 @@ class SyncAttendanceHandler(threading.Thread):
                 for device in devices:
                     logger.debug(device)
                     facility = str(device["facility"])
-
-                messageId = randomString(
-                    8)+"-"+randomString(4)+"-"+randomString(4)+"-"+randomString(4)+"-"+randomString(12)
-                logger.debug("messageId : "+messageId)
 
                 attendanceTime = str(message["info"]["time"])
                 attendanceDate = attendanceTime.replace("/", "-")

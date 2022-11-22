@@ -1,7 +1,8 @@
-""" This module check complete transection and send res message to wfm """
-""" check-transection.py """
+""" This module check incomplete transection and send res message to wfm """
+""" retry-transection.py """
 
 from module import alicloudDatabase
+from module import alicloudMQTT
 from module import alicloudAMQP
 from pymongo import MongoClient
 from datetime import datetime
@@ -108,37 +109,47 @@ def checkTransectionAndRetry():
             logger = setup_logger(logname, LOG_PATH+"/"+"inf-transection.log")
 
             ackcode = ""
-            all_ackdetail = []
-            deviceFailed = 0
             all_devices = 0
             isFailed = False
 
             for sub_t in sub_transection:
                 all_devices = all_devices+1
-                topic = str(sub_t['topic'])
-                device = topic.rsplit(',', 1)[-1]
 
                 ackcode = sub_t['ackcode']
                 if ackcode == "200":
                     isFailed = False
 
-                elif ackcode == "wating ack":
-                    ackcode = 404
-                    ackdetail = "no response"
-                    detail = str(device)+": '"+str(ackdetail)+"'"
-                    all_ackdetail.append(detail)
-                    deviceFailed = deviceFailed+1
+                else:
                     isFailed = True
 
-                else:
-                    ackdetail = sub_t['ackdetail']
-                    detail = str(device)+": '"+str(ackdetail)+"'"
-                    all_ackdetail.append(detail)
-                    deviceFailed = deviceFailed+1
-                    isFailed = True
+                    mq_message = sub_t['body']
+                    mq_topic = sub_t['topic']
+
+                    # Publish mqtt
+                    logger.debug("---- Publish MQTT  ----")
+                    result = alicloudMQTT.mqttPublish(mq_message, mq_topic)
+                    logmq = {
+                        "message": mq_message,
+                        "topic": mq_topic,
+                        "result": result
+                    }
+                    logmqs = str(logmq)
+                    logger.info(logmqs.replace("'", '"'))
+
+                    all_ts_time = datetime.now()
+                    all_ts_stamp = all_ts_time.strftime("%Y-%m-%d %H:%M:%S")
+
+                    # update on transection table
+                    query = {"messageId": messageId,"transection.$.topic":mq_topic}
+                    newvalues = {"$set": {
+                        "transection.$.publish_msg_time": all_ts_stamp}}
+                    isSuccess = alicloudDatabase.updateOneToDB(
+                        transectiontb, query, newvalues)
+                    logger.info(
+                    "update on transection table success ? : "+str(isSuccess))
+
 
             if isFailed == False:
-                errMsg = "No error message"
                 message = {
                     "messageId": messageId,
                     "operation": create_worker_operation_name+"_RES",
@@ -161,7 +172,7 @@ def checkTransectionAndRetry():
                 # update on transection table
                 query = {"messageId": messageId}
                 newvalues = {"$set": {
-                    "transection.$.send_to_WFM": isqmqpSuccess, "transection.$.send_to_WFM_timestamp": all_ts_stamp, "transection.$.transection_last_update": all_ts_stamp}}
+                    "send_to_WFM": isqmqpSuccess, "send_to_WFM_timestamp": all_ts_stamp, "transection_last_update": all_ts_stamp}}
                 isSuccess = alicloudDatabase.updateOneToDB(
                     transectiontb, query, newvalues)
 
@@ -177,7 +188,7 @@ def checkTransectionAndRetry():
                 # update on transection table
                 query = {"messageId": messageId}
                 newvalues = {"$set": {
-                    "worker_sync_retries": worker_sync_retries, "transection.$.transection_last_update": all_ts_stamp}}
+                    "worker_sync_retries": worker_sync_retries, "transection_last_update": all_ts_stamp}}
                 isSuccess = alicloudDatabase.updateOneToDB(
                     transectiontb, query, newvalues)
 

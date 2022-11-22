@@ -170,7 +170,7 @@ def checkTransectionAndSendREStoLAZ():
             # update on transection table
             query = {"messageId": messageId}
             newvalues = {"$set": {
-                "transection.$.send_to_WFM": True, "transection.$.send_to_WFM_timestamp": all_ts_stamp, "transection.$.transection_last_update": all_ts_stamp}}
+                "send_to_WFM": True, "send_to_WFM_timestamp": all_ts_stamp, "transection_last_update": all_ts_stamp}}
             isSuccess = alicloudDatabase.updateOneToDB(
                 transectiontb, query, newvalues)
 

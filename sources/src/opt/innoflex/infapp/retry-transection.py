@@ -122,24 +122,25 @@ def checkTransectionAndRetry():
                 else:
                     isFailed = True
 
-                    mq_message = sub_t['body']
-                    mq_topic = sub_t['topic']
+                    all_mqtt_publish = []
+                    
+                    msg_mqtt = {}
+                    msg_mqtt["message"] = sub_t['body']
+                    msg_mqtt["topic"] = sub_t['topic']
+
+                    all_mqtt_publish.append(msg_mqtt)
 
                     # Publish mqtt
                     logger.debug("---- Publish MQTT  ----")
-                    result = alicloudMQTT.mqttPublish(mq_message, mq_topic)
-                    logmq = {
-                        "message": mq_message,
-                        "topic": mq_topic,
-                        "result": result
-                    }
-                    logmqs = str(logmq)
-                    logger.info(logmqs.replace("'", '"'))
+                    result = alicloudMQTT.mqttPublish(all_mqtt_publish)
+                    for i in result:
+                        logger.debug(i)
 
                     all_ts_time = datetime.now()
                     all_ts_stamp = all_ts_time.strftime("%Y-%m-%d %H:%M:%S")
 
                     # update on transection table
+                    mq_topic = msg_mqtt["message"]
                     query = {"messageId": messageId,"transection.$.topic":mq_topic}
                     newvalues = {"$set": {
                         "transection.$.publish_msg_time": all_ts_stamp}}

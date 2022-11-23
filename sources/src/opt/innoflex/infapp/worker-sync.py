@@ -489,21 +489,30 @@ class ThreadedConsumer(threading.Thread):
                         logs = str(log)
                         logger.info(logs.replace("'", '"'))
                     else:
-                        logger.warning("Transection already exist")
+                        logger.warning("---- Message ID already exist, update transection ----")
+
+                        query = {"_id": messageId}
+                        logger.debug("query : "+str(query))
+                        newvalues = {"$set": {
+                            "info": w['info'],
+                            "transection": all_transection,
+                            "transection_create": all_ts_stamp,
+                            "transection_last_update": all_ts_stamp,
+                            "worker_sync_retries": 0,
+                            "send_to_WFM": False,
+                            "send_to_WFM_timestamp": ""}}
+                        logger.debug("new value : "+str(newvalues))
+                        isUpdateDevices = alicloudDatabase.updateOneToDB(
+                                    transectiontb, query, newvalues)
 
                     # Publish mqtt
-                    logger.debug("---- Publish MQTT  ----")
-                    for mq in all_mqtt_publish:
-                        mq_message = mq['message']
-                        mq_topic = mq['topic']
-                        result = alicloudMQTT.mqttPublish(mq_message, mq_topic)
-                        logmq = {
-                            "message": mq_message,
-                            "topic": mq_topic,
-                            "result": result
-                        }
-                        logmqs = str(logmq)
-                        logger.info(logmqs.replace("'", '"'))
+                    if len(all_mqtt_publish) > 0 :
+                        logger.debug("---- Publish MQTT  ----")
+                        result = alicloudMQTT.mqttPublish(all_mqtt_publish)
+                        for i in result:
+                            logger.debug(i)
+                    else :
+                        logger.debug("---- No Message for Publish MQTT  ----")
 
             else:
                 # not CREATE_UPDATE_WORKER package , Do nothing

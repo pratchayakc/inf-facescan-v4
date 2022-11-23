@@ -52,16 +52,21 @@ def on_log(client, userdata, level, buf):
 
 
 def on_connect(client, userdata, flags, rc):
-    global result
+    global all_mqtt
+    global all_result
     logger.debug('Connected with result code ' + str(rc))
-    data = json.dumps(msg)
-    logger.info(data)
-    rc = client.publish(topic, data, qos=1)
-    result = 'publish result  %s' % rc
-    time.sleep(1)
+    all_result = []
+    for mq in all_mqtt:
+        mq_message = mq['message']
+        mq_topic = mq['topic']
+
+        data = json.dumps(mq_message)
+        logger.info(data)
+        rc = client.publish(mq_topic, data, qos=1)
+        result = 'publish '+mq_topic+' result  %s' % rc
+        all_result.append(result)
     client.loop_stop()  # Stop loop
     client.disconnect()  # disconnect
-
 
 def on_message(client, userdata, msg):
     logger.debug(msg.topic + ' ' + str(msg.payload))
@@ -71,12 +76,11 @@ def on_disconnect(client, userdata, rc):
     if rc != 0:
         logger.warning('Unexpected disconnection %s' % rc)
 
-
-def mqttPublish(pub_msg, pub_topic):
+def mqttPublish(all_mqtt_publish):
     try:
-        global msg, topic, result
-        msg = pub_msg
-        topic = pub_topic
+        global all_mqtt
+        global all_result
+        all_mqtt = all_mqtt_publish
 
         client = mqtt.Client(
             client_id, protocol=mqtt.MQTTv311, clean_session=False)
@@ -91,7 +95,7 @@ def mqttPublish(pub_msg, pub_topic):
         client.connect(brokerUrl, port, 60)
         client.loop_forever()
 
-        return result
+        return all_result
 
     except Exception as e:
         logger.error(str(e))

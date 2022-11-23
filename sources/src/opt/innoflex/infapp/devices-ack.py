@@ -107,9 +107,6 @@ class ThreadedConsumer(threading.Thread):
             mydb = dbClient[dbName]
             mycol = mydb[transectiontb]
 
-            ack_time = datetime.now()
-            ack_stamp = ack_time.strftime("%Y-%m-%d %H:%M:%S")
-
             logname = 'DeviceAck'+' ['+messageId+'] '
             logger = setup_logger(logname, LOG_PATH+"/"+"inf-devices-ack.log")
 
@@ -154,6 +151,8 @@ class ThreadedConsumer(threading.Thread):
                         if topic == parent_topic+"/face/"+deviceCode:
                             logger.debug("topic : "+topic)
 
+                            ack_time = datetime.now()
+                            ack_stamp = ack_time.strftime("%Y-%m-%d %H:%M:%S")
                             # update on transection table
                             query = {"messageId": messageId, "transection": {
                                 "$elemMatch": {"topic": topic, "ackcode": "wating ack"}}}
@@ -181,7 +180,10 @@ class ThreadedConsumer(threading.Thread):
                                 if oper == create_worker_operation_name:
                                     # INACTIVE Worker
                                     # update on workerlist table
-                                    
+
+                                    ack_time = datetime.now()
+                                    ack_stamp = ack_time.strftime("%Y-%m-%d %H:%M:%S")
+
                                     query = {"registration.last_messageId": messageId, "devices": {
                                         "$elemMatch": {"deviceCode": deviceCode}}}
                                     newvalues = {"$set": {"registration.last_ack_update": ack_stamp,
@@ -249,6 +251,9 @@ class ThreadedConsumer(threading.Thread):
                         if topic == parent_topic+"/face/"+deviceCode:
                             logger.debug("topic : "+topic)
 
+                            ack_time = datetime.now()
+                            ack_stamp = ack_time.strftime("%Y-%m-%d %H:%M:%S")
+
                             # update on transection table
                             query = {"messageId": messageId, "transection": {
                                 "$elemMatch": {"topic": topic, "ackcode": "wating ack"}}}
@@ -276,6 +281,9 @@ class ThreadedConsumer(threading.Thread):
                                 if oper == create_worker_operation_name:
                                     # create worker
                                     # update on workerlist table
+
+                                    ack_time = datetime.now()
+                                    ack_stamp = ack_time.strftime("%Y-%m-%d %H:%M:%S")
 
                                     query = {"registration.last_messageId": messageId, "devices": {
                                         "$elemMatch": {"deviceCode": deviceCode}}}

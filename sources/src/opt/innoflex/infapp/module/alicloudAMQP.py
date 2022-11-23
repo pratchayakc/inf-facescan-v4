@@ -63,7 +63,7 @@ def amqpPublish(exchangeName, routingKey, message, queueName):
         print("Disconnect...")
         # disconnect
         connect.close()
-        return "Publish Success ! "+str(messageId)
+        return True
 
     except Exception as e:
         if str(e) == "[Errno -2] Name or service not known":
@@ -71,3 +71,4 @@ def amqpPublish(exchangeName, routingKey, message, queueName):
                 "Can't connect with AMQP Broker , please check endpoint name in config file.")
         else:
             logger.error(str(e))
+        return False

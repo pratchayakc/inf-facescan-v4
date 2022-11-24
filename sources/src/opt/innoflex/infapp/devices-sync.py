@@ -5,6 +5,7 @@
 from paho.mqtt.client import MQTT_LOG_INFO, MQTT_LOG_NOTICE, MQTT_LOG_WARNING, MQTT_LOG_ERR, MQTT_LOG_DEBUG
 from paho.mqtt import client as mqtt
 from module import alicloudDatabase
+from module import alicloudMQTT
 from pymongo import MongoClient
 from datetime import datetime
 import configparser
@@ -14,6 +15,9 @@ import sys
 import ssl
 import os
 import ast
+import string
+import random
+
 config_path = "/opt/innoflex/config/configfile.ini"
 config_obj = configparser.ConfigParser()
 config_obj.read(config_path)
@@ -50,6 +54,9 @@ dbClient = MongoClient(host=dbHost, replicaset=dbReplicaSet, username=dbUser,
 dbName = infdatabase['name']
 devicetb = infcollection['devices']
 workertb = infcollection['workers']
+transectiontb = infcollection['transections']
+
+parent_topic = inftopic['parent']
 
 mydb = dbClient[dbName]
 mywk_col = mydb[workertb]
@@ -106,6 +113,12 @@ def on_connect(client, userdata, flags, rc):
     except Exception as e:
         logger.error(str(e))
 
+def randomString(length):
+    letters_and_digits = string.ascii_lowercase + string.digits
+    result_str = ''.join(
+        (random.choice(letters_and_digits) for i in range(length)))
+    #logger.debug("Random alphanumeric String is:", result_str)
+    return result_str
 
 def deviceSync(cmd, deviceCode, facility, direction):
     count = 0
@@ -146,6 +159,211 @@ def deviceSync(cmd, deviceCode, facility, direction):
 
                 logger.debug("isUpdateDevices : "+str(isUpdateDevices))
                 count = count+1
+
+                mydb = dbClient[dbName]
+                mycol = mydb[workertb]
+                wkquery = {"_id": workerCode}
+                workerlist = mycol.find(wkquery, no_cursor_timeout=True)
+
+                logger.debug("--- prepare data for publish mqtt update worker ---")
+                for w in workerlist:
+                    devices = w["devices"]
+                    workerGender = w['info']['gender']
+                    workerName = w['info']['name']
+                    pictureURL = w['info']['pictureURL']
+                    all_transection = []
+                    all_mqtt_publish = []
+
+                    messageId = randomString(8)+"-"+randomString(4)+"-"+randomString(4)+"-"+randomString(4)+"-"+randomString(12)
+                    logger.debug("messageId : "+messageId)
+
+                    for device in devices:
+                        d_status = device["status"]
+                        d_regis = device["regester"]
+                        
+
+                        if d_status == "ACTIVE" and d_regis == "unregistered":
+                            tempCardType = 0  # permanent
+
+                            if workerGender == "MALE":
+                                gender = 0  # male
+                            else:
+                                gender = 1  # female
+
+                            worker_json = {
+                                "messageId": messageId,
+                                "operator": "EditPerson",
+                                "info":
+                                {
+                                    "customId": workerCode,
+                                    "name": workerName,
+                                    "gender": gender,
+                                    "address": device["facility"],
+                                    "idCard": workerCode,  # ID number show on web service
+                                    "tempCardType": tempCardType,
+                                    "personType": 0,  # 0=White list, 1=blacklist
+                                    "cardType": 0,
+                                    "picURI": pictureURL
+                                }
+                            }
+
+                            msg_mqtt = {}
+                            msg_mqtt["message"] = worker_json
+                            pub_topic = parent_topic + \
+                                "/face/"+device["deviceCode"]
+                            msg_mqtt["topic"] = pub_topic
+
+                            all_mqtt_publish.append(msg_mqtt)
+
+                            ts_time = datetime.now()
+                            ts_stamp = ts_time.strftime("%Y-%m-%d %H:%M:%S")
+
+                            transection = {}
+                            transection["topic"] = pub_topic
+                            transection["body"] = worker_json
+                            transection["publish_msg_time"] = ts_stamp
+                            transection["receive_ack_time"] = ""
+                            transection["ackcode"] = "wating ack"
+                            transection["ackdetail"] = ""
+
+                            all_transection.append(transection)
+
+                        elif d_status == "INACTIVE" and d_regis == "registered":
+                            worker_json = {
+                                "operator": "DelPerson",
+                                "messageId": messageId,
+                                "info":
+                                    {
+                                        "customId": workerCode
+                                    }
+                            }
+
+                            msg_mqtt = {}
+                            msg_mqtt["message"] = worker_json
+                            pub_topic = parent_topic + \
+                                "/face/"+device["deviceCode"]
+                            msg_mqtt["topic"] = pub_topic
+
+                            all_mqtt_publish.append(msg_mqtt)
+
+                            ts_time = datetime.now()
+                            ts_stamp = ts_time.strftime("%Y-%m-%d %H:%M:%S")
+
+                            transection = {}
+                            transection["topic"] = pub_topic
+                            transection["body"] = worker_json
+                            transection["publish_msg_time"] = ts_stamp
+                            transection["receive_ack_time"] = ""
+                            transection["ackcode"] = "wating ack"
+                            transection["ackdetail"] = ""
+
+                            all_transection.append(transection)
+
+                        elif d_status == "BLACKLISTED" and d_regis == "unregistered":
+
+                            tempCardType = 0  # permanent
+
+                            if workerGender == "MALE":
+                                gender = 0  # male
+                            else:
+                                gender = 1  # female
+
+                            worker_json = {
+                                "messageId": messageId,
+                                "operator": "EditPerson",
+                                "info":
+                                {
+                                    "customId": workerCode,
+                                    "name": workerName,
+                                    "gender": gender,
+                                    "address": device["facility"],
+                                    "idCard": workerCode,  # ID number show on web service
+                                    "tempCardType": tempCardType,
+                                    "personType": 1,  # 0=Whitelist, 1=blacklist
+                                    "cardType": 0,
+                                    "picURI": pictureURL
+                                }
+                            }
+
+                            msg_mqtt = {}
+                            msg_mqtt["message"] = worker_json
+                            pub_topic = parent_topic + \
+                                "/face/"+device["deviceCode"]
+                            msg_mqtt["topic"] = pub_topic
+
+                            all_mqtt_publish.append(msg_mqtt)
+
+                            ts_time = datetime.now()
+                            ts_stamp = ts_time.strftime("%Y-%m-%d %H:%M:%S")
+
+                            transection = {}
+                            transection["topic"] = pub_topic
+                            transection["body"] = worker_json
+                            transection["publish_msg_time"] = ts_stamp
+                            transection["receive_ack_time"] = ""
+                            transection["ackcode"] = "wating ack"
+                            transection["ackdetail"] = ""
+
+                            all_transection.append(transection)
+
+                    all_ts_time = datetime.now()
+                    all_ts_stamp = all_ts_time.strftime("%Y-%m-%d %H:%M:%S")
+                    data = {
+                        "_id": messageId,
+                        "messageId": messageId,
+                        "operation": "CREATE_UPDATE_WORKER",
+                        "info": w['info'],
+                        "transection": all_transection,
+                        "transection_create": all_ts_stamp,
+                        "transection_last_update": all_ts_stamp,
+                        "worker_sync_retries": 0,
+                        "send_to_WFM": False,
+                        "send_to_WFM_timestamp": ""
+                    }
+
+                    isSuccess = alicloudDatabase.insertToDB(
+                        transectiontb, data)
+
+                    if isSuccess == True:
+                        logger.debug("---- Insert transection success ----")
+                        log = {
+                            "data": data,
+                            "tasks": {
+                                "database": {
+                                    "collection": workertb,
+                                    "operation": "insert",
+                                    "success": isSuccess
+                                }
+                            }
+                        }
+
+                        logs = str(log)
+                        logger.info(logs.replace("'", '"'))
+                    else:
+                        logger.warning("---- Message ID already exist, update transection ----")
+
+                        query = {"_id": messageId}
+                        logger.debug("query : "+str(query))
+                        newvalues = {"$set": {
+                            "info": w['info'],
+                            "transection": all_transection,
+                            "transection_create": all_ts_stamp,
+                            "transection_last_update": all_ts_stamp,
+                            "worker_sync_retries": 0,
+                            "send_to_WFM": False,
+                            "send_to_WFM_timestamp": ""}}
+                        logger.debug("new value : "+str(newvalues))
+                        isUpdateDevices = alicloudDatabase.updateOneToDB(
+                                    transectiontb, query, newvalues)
+
+                    # Publish mqtt
+                    if len(all_mqtt_publish) > 0 :
+                        logger.debug("---- Publish MQTT  ----")
+                        result = alicloudMQTT.mqttPublish(all_mqtt_publish)
+                        for i in result:
+                            logger.debug(i)
+                    else :
+                        logger.debug("---- No Message for Publish MQTT  ----")
 
         elif cmd == 'delete':
             # using list comprehension

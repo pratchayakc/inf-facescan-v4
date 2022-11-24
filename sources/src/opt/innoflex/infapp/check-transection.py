@@ -147,7 +147,7 @@ def checkTransectionAndSendREStoLAZ():
 
             else:
                 errMsg = "Failed to sync worker to device ("+str(deviceFailed)+" failed/"+str(
-                    all_devices)+" total). Detail: ["+all_ackdetail+"]"
+                    all_devices)+" total). Detail: ["+str(all_ackdetail)+"]"
                 message = {
                     "messageId": messageId,
                     "operation": create_worker_operation_name+"_RES",

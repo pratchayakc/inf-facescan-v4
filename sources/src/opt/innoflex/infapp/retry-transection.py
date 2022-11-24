@@ -104,13 +104,18 @@ def checkTransectionAndRetry():
             messageId = t['messageId']
             sub_transection = t['transection']
             worker_sync_retries = int(t['worker_sync_retries'])
-
+            try:
+                no_respond = int(t['no_respond'])
+            except Exception as e:
+                no_respond = 0 
+        
             logname = 'CheckTransection'+' ['+messageId+'] '
             logger = setup_logger(logname, LOG_PATH+"/"+"inf-transection.log")
 
             ackcode = ""
             all_devices = 0
             isFailed = False
+            noRespond = False
 
             for sub_t in sub_transection:
                 all_devices = all_devices+1
@@ -118,6 +123,10 @@ def checkTransectionAndRetry():
                 ackcode = sub_t['ackcode']
                 if ackcode == "200":
                     isFailed = False
+                
+                elif ackcode == "wating ack":
+                    isFailed = False
+                    noRespond = True
 
                 else:
                     isFailed = True
@@ -181,15 +190,19 @@ def checkTransectionAndRetry():
                     "update on transection table success ? : "+str(isSuccess))
 
             else:
+                if noRespond == True : 
+                    no_respond = no_respond+1
+                else:
+                    no_respond = 0
+                
                 worker_sync_retries = worker_sync_retries+1
-
                 all_ts_time = datetime.now()
                 all_ts_stamp = all_ts_time.strftime("%Y-%m-%d %H:%M:%S")
 
                 # update on transection table
                 query = {"messageId": messageId}
                 newvalues = {"$set": {
-                    "worker_sync_retries": worker_sync_retries, "transection_last_update": all_ts_stamp}}
+                    "worker_sync_retries": worker_sync_retries, "transection_last_update": all_ts_stamp,"no_respond": no_respond}}
                 isSuccess = alicloudDatabase.updateOneToDB(
                     transectiontb, query, newvalues)
 

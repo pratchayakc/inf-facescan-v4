@@ -1,0 +1,54 @@
+### RES Message###
+RES Message with all 200 ack code {
+    "messageId": "1f2b27a3-c6ec-443e-92f0-d82f5057ebc3",
+    "operation": "CREATE_UPDATE_WORKER_RES",
+    "code": 200,
+    "facilities": ["SSW"],
+    "errorMsg": "No error",
+    "info": {
+        "workerCode": "1000463540",
+        "name": "Worawat Kunsomsong",
+        "gender": "MALE",
+        "workerType": "DAILY_WORKER",
+        "facilities": [
+            "KSN",
+            "SSW"
+        ]
+    }
+}
+
+RES Message with Failed Ack {
+    "messageId": "1f2b27a3-c6ec-443e-92f0-d82f5057ebc3",
+    "operation": "CREATE_UPDATE_WORKER_RES",
+    "code": 471,
+    "facilities": ["SSW"],
+    "errorMsg": "Failed to sync worker to device (1 failed/6 total). Detail: [190214: 'Get PIC and connect URL error']",
+    "info": {
+        "workerCode": "1000463540",
+        "name": "Worawat Kunsomsong",
+        "gender": "MALE",
+        "workerType": "DAILY_WORKER",
+        "facilities": [
+            "KSN",
+            "SSW"
+        ]
+    }
+}
+
+RES Message with no respone {
+    "messageId": "1f2b27a3-c6ec-443e-92f0-d82f5057ebc3",
+    "operation": "CREATE_UPDATE_WORKER_RES",
+    "code": 0,
+    "facilities": ["SSW"],
+    "errorMsg": "Failed to sync worker to device (1 failed/6 total). Detail: [190214: 'no response']",
+    "info": {
+        "workerCode": "1000463540",
+        "name": "Worawat Kunsomsong",
+        "gender": "MALE",
+        "workerType": "DAILY_WORKER",
+        "facilities": [
+            "KSN",
+            "SSW"
+        ]
+    }
+}

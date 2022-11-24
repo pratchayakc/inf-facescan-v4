@@ -1,0 +1,80 @@
+{
+    "_id": "1000588815",
+    "info": {
+        "workerCode": "1000588815",
+        "name": "Pattharanun Sittisawang",
+        "gender": "FEMALE",
+        "workerType": "DAILY_WORKER",
+        "facilities": [
+            "SSW"
+        ],
+        "pictureURL": "https://logistics-wfm.oss-ap-southeast-1.aliyuncs.com/TH/worker/photo/d7442aae78084a13820a1025418fb9e5_logistics-lsa.jpg?Expires=1669863018&OSSAccessKeyId=LTAI4GKkashwUXR4m7TcJUQR&Signature=6XpjpHk8BxC7UCjocSM1FiByXX8%3D",
+        "status": "ACTIVE"
+    },
+    "registration": {
+        "last_messageId": "4bd5f7d9-c0ef-43e8-b536-c70d0b2888bc",
+        "received_time": "2022-11-24 09:50:59",
+        "last_ack_update": "2022-11-24 09:51:01"
+    },
+    "devices": [{
+            "deviceCode": "1930215",
+            "facility": "SSW",
+            "type": "OUT",
+            "status": "ACTIVE",
+            "regester": "registered",
+            "last_ack_messageId": "4bd5f7d9-c0ef-43e8-b536-c70d0b2888bc",
+            "last_ack_detail": "No error message",
+            "last_ack_update": "2022-11-24 09:51:00"
+        },
+        {
+            "deviceCode": "1930217",
+            "facility": "SSW",
+            "type": "IN",
+            "status": "ACTIVE",
+            "regester": "registered",
+            "last_ack_messageId": "4bd5f7d9-c0ef-43e8-b536-c70d0b2888bc",
+            "last_ack_detail": "No error message",
+            "last_ack_update": "2022-11-24 09:51:01"
+        },
+        {
+            "deviceCode": "1930222",
+            "facility": "SSW",
+            "type": "IN",
+            "status": "ACTIVE",
+            "regester": "registered",
+            "last_ack_messageId": "4bd5f7d9-c0ef-43e8-b536-c70d0b2888bc",
+            "last_ack_detail": "No error message",
+            "last_ack_update": "2022-11-24 09:51:01"
+        },
+        {
+            "deviceCode": "1930226",
+            "facility": "SSW",
+            "type": "IN",
+            "status": "ACTIVE",
+            "regester": "registered",
+            "last_ack_messageId": "4bd5f7d9-c0ef-43e8-b536-c70d0b2888bc",
+            "last_ack_detail": "No error message",
+            "last_ack_update": "2022-11-24 09:51:01"
+        },
+        {
+            "deviceCode": "1930212",
+            "facility": "SSW",
+            "type": "OUT",
+            "status": "ACTIVE",
+            "regester": "registered",
+            "last_ack_messageId": "4bd5f7d9-c0ef-43e8-b536-c70d0b2888bc",
+            "last_ack_detail": "No error message",
+            "last_ack_update": "2022-11-24 09:51:01"
+        },
+        {
+            "deviceCode": "1930214",
+            "facility": "SSW",
+            "type": "OUT",
+            "status": "ACTIVE",
+            "regester": "registered",
+            "last_ack_messageId": "4bd5f7d9-c0ef-43e8-b536-c70d0b2888bc",
+            "last_ack_detail": "No error message",
+            "last_ack_update": "2022-11-24 09:51:01"
+        }
+    ]
+}

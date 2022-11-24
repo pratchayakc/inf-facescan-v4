@@ -1,0 +1,155 @@
+{
+    "_id": "80dfd67e-11b7-4069-b649-b2f69531waiting ackf360",
+    "messageId": "80dfd67e-11b7-4069-b649-b2f69531f360",
+    "operation": "CREATE_UPDATE_WORKER",
+    "info": {
+        "workerCode": "1000031557",
+        "name": "Methawee  Kongruay",
+        "gender": "FEMALE",
+        "workerType": "REGULAR_WORKER",
+        "facilities": [
+            "LKB",
+            "SSW"
+        ],
+        "pictureURL": "https://logistics-wfm.oss-ap-southeast-1.aliyuncs.com/TH/worker/photo/2fd1188367274541851f7c4991d9ea40_logistics-lsa.png?Expires=1672796494&OSSAccessKeyId=LTAI4GKkashwUXR4m7TcJUQR&Signature=uHdfd8lr0zbhY2us1ey%2FGY5IAkI%3D",
+        "status": "ACTIVE"
+    },
+    "transection": [{
+            "topic": "LAZADA_WFM/face/1930212",
+            "body": {
+                "messageId": "80dfd67e-11b7-4069-b649-b2f69531f360",
+                "operator": "EditPerson",
+                "info": {
+                    "customId": "1000031557",
+                    "name": "Methawee  Kongruay",
+                    "gender": 1,
+                    "address": "SSW",
+                    "idCard": "1000031557",
+                    "tempCardType": 0,
+                    "personType": 0,
+                    "cardType": 0,
+                    "picURI": "https://logistics-wfm.oss-ap-southeast-1.aliyuncs.com/TH/worker/photo/2fd1188367274541851f7c4991d9ea40_logistics-lsa.png?Expires=1672796494&OSSAccessKeyId=LTAI4GKkashwUXR4m7TcJUQR&Signature=uHdfd8lr0zbhY2us1ey%2FGY5IAkI%3D"
+                }
+            },
+            "publish_msg_time": "2022-11-23 16:44:11",
+            "receive_ack_time": "",
+            "ackcode": "wating ack",
+            "ackdetail": ""
+        },
+        {
+            "topic": "LAZADA_WFM/face/1930215",
+            "body": {
+                "messageId": "80dfd67e-11b7-4069-b649-b2f69531f360",
+                "operator": "EditPerson",
+                "info": {
+                    "customId": "1000031557",
+                    "name": "Methawee  Kongruay",
+                    "gender": 1,
+                    "address": "SSW",
+                    "idCard": "1000031557",
+                    "tempCardType": 0,
+                    "personType": 0,
+                    "cardType": 0,
+                    "picURI": "https://logistics-wfm.oss-ap-southeast-1.aliyuncs.com/TH/worker/photo/2fd1188367274541851f7c4991d9ea40_logistics-lsa.png?Expires=1672796494&OSSAccessKeyId=LTAI4GKkashwUXR4m7TcJUQR&Signature=uHdfd8lr0zbhY2us1ey%2FGY5IAkI%3D"
+                }
+            },
+            "publish_msg_time": "2022-11-23 16:44:11",
+            "receive_ack_time": "",
+            "ackcode": "wating ack",
+            "ackdetail": ""
+        },
+        {
+            "topic": "LAZADA_WFM/face/1930217",
+            "body": {
+                "messageId": "80dfd67e-11b7-4069-b649-b2f69531f360",
+                "operator": "EditPerson",
+                "info": {
+                    "customId": "1000031557",
+                    "name": "Methawee  Kongruay",
+                    "gender": 1,
+                    "address": "SSW",
+                    "idCard": "1000031557",
+                    "tempCardType": 0,
+                    "personType": 0,
+                    "cardType": 0,
+                    "picURI": "https://logistics-wfm.oss-ap-southeast-1.aliyuncs.com/TH/worker/photo/2fd1188367274541851f7c4991d9ea40_logistics-lsa.png?Expires=1672796494&OSSAccessKeyId=LTAI4GKkashwUXR4m7TcJUQR&Signature=uHdfd8lr0zbhY2us1ey%2FGY5IAkI%3D"
+                }
+            },
+            "publish_msg_time": "2022-11-23 16:44:11",
+            "receive_ack_time": "",
+            "ackcode": "wating ack",
+            "ackdetail": ""
+        },
+        {
+            "topic": "LAZADA_WFM/face/1930222",
+            "body": {
+                "messageId": "80dfd67e-11b7-4069-b649-b2f69531f360",
+                "operator": "EditPerson",
+                "info": {
+                    "customId": "1000031557",
+                    "name": "Methawee  Kongruay",
+                    "gender": 1,
+                    "address": "SSW",
+                    "idCard": "1000031557",
+                    "tempCardType": 0,
+                    "personType": 0,
+                    "cardType": 0,
+                    "picURI": "https://logistics-wfm.oss-ap-southeast-1.aliyuncs.com/TH/worker/photo/2fd1188367274541851f7c4991d9ea40_logistics-lsa.png?Expires=1672796494&OSSAccessKeyId=LTAI4GKkashwUXR4m7TcJUQR&Signature=uHdfd8lr0zbhY2us1ey%2FGY5IAkI%3D"
+                }
+            },
+            "publish_msg_time": "2022-11-23 16:44:11",
+            "receive_ack_time": "",
+            "ackcode": "wating ack",
+            "ackdetail": ""
+        },
+        {
+            "topic": "LAZADA_WFM/face/1930226",
+            "body": {
+                "messageId": "80dfd67e-11b7-4069-b649-b2f69531f360",
+                "operator": "EditPerson",
+                "info": {
+                    "customId": "1000031557",
+                    "name": "Methawee  Kongruay",
+                    "gender": 1,
+                    "address": "SSW",
+                    "idCard": "1000031557",
+                    "tempCardType": 0,
+                    "personType": 0,
+                    "cardType": 0,
+                    "picURI": "https://logistics-wfm.oss-ap-southeast-1.aliyuncs.com/TH/worker/photo/2fd1188367274541851f7c4991d9ea40_logistics-lsa.png?Expires=1672796494&OSSAccessKeyId=LTAI4GKkashwUXR4m7TcJUQR&Signature=uHdfd8lr0zbhY2us1ey%2FGY5IAkI%3D"
+                }
+            },
+            "publish_msg_time": "2022-11-23 16:44:11",
+            "receive_ack_time": "",
+            "ackcode": "wating ack",
+            "ackdetail": ""
+        },
+        {
+            "topic": "LAZADA_WFM/face/1930214",
+            "body": {
+                "messageId": "80dfd67e-11b7-4069-b649-b2f69531f360",
+                "operator": "EditPerson",
+                "info": {
+                    "customId": "1000031557",
+                    "name": "Methawee  Kongruay",
+                    "gender": 1,
+                    "address": "SSW",
+                    "idCard": "1000031557",
+                    "tempCardType": 0,
+                    "personType": 0,
+                    "cardType": 0,
+                    "picURI": "https://logistics-wfm.oss-ap-southeast-1.aliyuncs.com/TH/worker/photo/2fd1188367274541851f7c4991d9ea40_logistics-lsa.png?Expires=1672796494&OSSAccessKeyId=LTAI4GKkashwUXR4m7TcJUQR&Signature=uHdfd8lr0zbhY2us1ey%2FGY5IAkI%3D"
+                }
+            },
+            "publish_msg_time": "2022-11-23 16:44:11",
+            "receive_ack_time": "",
+            "ackcode": "wating ack",
+            "ackdetail": ""
+        }
+    ],
+    "transection_create": "2022-11-23 16:44:11",
+    "transection_last_update": "2022-11-24 13:52:22",
+    "worker_sync_retries": 3,
+    "send_to_WFM": True,
+    "send_to_WFM_timestamp": "2022-11-24 13:52:22"
+}

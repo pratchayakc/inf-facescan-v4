@@ -219,7 +219,6 @@ def on_message(client, userdata, message):
             logger.debug("deviceCode : "+deviceCode)
             logger.debug("facility : "+facility)
             logger.debug("direction : "+direction)
-            deviceSync('delete', deviceCode, facility, direction)
 
             device_col = mydb["devices"]
             x = device_col.delete_many(myquery)

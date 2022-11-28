@@ -6,6 +6,7 @@ from module import connection
 from module import alicloudDatabase
 from datetime import datetime
 from pymongo import MongoClient
+from time import sleep
 import configparser
 import threading
 import logging
@@ -513,6 +514,9 @@ class ThreadedConsumer(threading.Thread):
                             logger.debug(i)
                     else :
                         logger.debug("---- No Message for Publish MQTT  ----")
+
+                #sleep for 50 milliseconds
+                sleep(0.05)
 
             else:
                 # not CREATE_UPDATE_WORKER package , Do nothing

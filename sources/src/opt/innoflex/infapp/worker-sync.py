@@ -95,6 +95,7 @@ class ThreadedConsumer(threading.Thread):
             queueName, on_message_callback=self.on_message))
 
     def on_message(self, channel, method_frame, header_frame, body):
+        print(body)
         try:
             body = str(body.decode())
             message = ast.literal_eval(body)
@@ -524,6 +525,9 @@ class ThreadedConsumer(threading.Thread):
                 channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
         except Exception as e:
+            logname = 'WorkerSync'
+            logger = setup_logger(logname, LOG_PATH+"/"+"inf-worker-sync.log")
+            logger.error("Message ---  "+str(body) )
             logger.error("Error on "+str(e) +
                          ", or Invalid message format -- drop message")
             channel.basic_ack(delivery_tag=method_frame.delivery_tag)
